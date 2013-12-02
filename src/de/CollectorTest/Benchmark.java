@@ -1,16 +1,13 @@
 package de.CollectorTest;
 
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.crypto.spec.GCMParameterSpec;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -44,17 +41,19 @@ public class Benchmark extends JFrame{
 		buttonPanel.setLayout(new FlowLayout());
 		this.add(buttonPanel,BorderLayout.SOUTH);
 		
-		//	panel for consol
+		//	panel for console
 		final JPanel consolePanel = new JPanel();
-		consolePanel.setPreferredSize(new Dimension(100,100));
+		consolePanel.setPreferredSize(new Dimension(100, 100));
 		consolePanel.setLayout(new FlowLayout());
 		this.add(consolePanel,BorderLayout.NORTH);
 		
 		//	loading and pause label
 		ImageIcon icon = new ImageIcon(Benchmark.class.getResource("assets/loading.gif"));
 		final JLabel loadingLabel = new JLabel(icon);
+		loadingLabel.setPreferredSize(new Dimension(100, 100));
 		icon = new ImageIcon(Benchmark.class.getResource("assets/pause.gif"));
 		final JLabel pauseLabel = new JLabel(icon);
+		pauseLabel.setPreferredSize(new Dimension(100, 100));
 		
 		//	status text if is running
 		final JLabel statusText = new JLabel("Test nicht gestartet");
@@ -62,9 +61,8 @@ public class Benchmark extends JFrame{
 		
 		console.setBackground(getBackground());
 		consolePanel.add(console);
-		consolePanel.add(pauseLabel);
-		
 		consolePanel.add(statusText);
+		consolePanel.add(pauseLabel);
 		
 		//	startStop button
 		final JButton startStopWorker = new JButton("Test starten");
@@ -118,6 +116,10 @@ public class Benchmark extends JFrame{
 				isRunning = false;
 				startStopWorker.setText("Test starten");
 				statusText.setText("Test zurückgestellt");
+				console.setText("");
+				consolePanel.add(pauseLabel);
+				consolePanel.remove(loadingLabel);
+				consolePanel.repaint();
 			}
 		});
 		buttonPanel.add(resetWorker);
