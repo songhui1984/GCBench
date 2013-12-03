@@ -18,15 +18,16 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.general.DefaultPieDataset;
 
 @SuppressWarnings("serial")
 public class Benchmark extends JFrame{
 	
 	//	parameter
-	static int overAllRounds = 100000;
+	static int overAllRounds = 1000;
 	static int roundsToLive = 250; 
-	static int arrLength = 1000;
+	static int arrLength = 100;
 	
 	boolean isRunning = false;
 	Worker worker;
@@ -68,7 +69,7 @@ public class Benchmark extends JFrame{
 		
 		//	status text if is running
 		final JLabel statusText = new JLabel("Test nicht gestartet");
-		statusText.setPreferredSize(new Dimension(120,20));
+		statusText.setPreferredSize(new Dimension(150,20));
 		
 		console.setBackground(getBackground());
 		console.setEditable(false);
@@ -78,17 +79,28 @@ public class Benchmark extends JFrame{
 		
 //		TODO SHIAAT data.addValue(value, rowKey, columnKey);
 		
+//		final double[][] data2 = new double[][] {
+//	            {1.0, 4.0, 3.0, 5.0, 5.0, 7.0, 7.0, 8.0}
+//	    };
+//
+//		data = (DefaultCategoryDataset) DatasetUtilities.createCategoryDataset("", "", data2);
 		
-		JFreeChart chart = ChartFactory.createAreaChart("sdf", "asdsa", "asdsad", data);
+		
+		JFreeChart chart = ChartFactory.createAreaChart("", "Rounds to live", "Amount of Objects", data);
+		chart.setBackgroundImageAlpha(0);
+		chart.setBackgroundPaint(getBackground());
+		
+		
+//		data.addValue(2.0, "", "");
 		
 		consolePanel.add(pauseLabel);
 		ChartPanel panel = new ChartPanel(chart);
 		this.add(panel);
-		
+		data.addValue(2.0, "", "2");
 		
 		//	startStop button
 		final JButton startStopWorker = new JButton("Test starten");
-		startStopWorker.setPreferredSize(new Dimension(150, 40));
+		startStopWorker.setPreferredSize(new Dimension(170, 40));
 		startStopWorker.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (worker.isAlive()) {
@@ -121,7 +133,7 @@ public class Benchmark extends JFrame{
 		
 		//	reset button
 		JButton resetWorker = new JButton("Test zurückstellen");
-		resetWorker.setPreferredSize(new Dimension(150, 40));
+		resetWorker.setPreferredSize(new Dimension(170, 40));
 		resetWorker.addActionListener(new ActionListener() {
 			@SuppressWarnings("static-access")
 			public void actionPerformed(ActionEvent e) {

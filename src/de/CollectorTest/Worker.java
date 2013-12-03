@@ -40,6 +40,7 @@ public class Worker extends Thread {
 		while ((currentRound < overAllRounds) && !forcedShutDown.get()) {
 			livingObjects = 0;
 			dyingObjects = 0;
+			countArr = new int[roundsToLive];
 			
 			while (forcedPause.get()) {
 				try {
@@ -53,9 +54,11 @@ public class Worker extends Thread {
 			for (int i = 0; i < arrLength; i++) {
 				if (randomizedObjects[i].getRoundsToLive() > (currentRound - randomizedObjects[i].getStartRound())) {
 					livingObjects++;
+					countArr[randomizedObjects[i].getRoundsToLive() + 1]++;
 				} else {
 					dyingObjects++;
 					randomizedObjects[i] = generateRandomizedObject(i);
+					countArr[randomizedObjects[i].getRoundsToLive() + 1]++;
 				}
 			}
 			
@@ -69,8 +72,11 @@ public class Worker extends Thread {
 			}
 			
 			//	TODO graph data
+			for (int i = 0; i < arrLength; i++) {
+				Benchmark.data.addValue(countArr[randomizedObjects[i].getRoundsToLive()] , "", Integer.toString(i + 1));
+			}
 			
-			Benchmark.console.setText("Current round:  " + currentRound + "\nOverAll Rounds: " + overAllRounds + "\n----------\nSurvived this round:         " + livingObjects + "\nDied in this round:           " + dyingObjects);
+			Benchmark.console.setText("Current Round:   " + currentRound + "\nOverAll Rounds: " + overAllRounds + "\n----------\nSurvived this round:         " + livingObjects + "\nDied in this round:           " + dyingObjects);
 		}
 		
 //		System.out.println("Workerloop beendet");
