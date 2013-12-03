@@ -3,6 +3,7 @@ package de.CollectorTest;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -48,18 +49,21 @@ public class Benchmark extends JFrame{
 		this.add(consolePanel,BorderLayout.NORTH);
 		
 		//	loading and pause label
-		ImageIcon icon = new ImageIcon(Benchmark.class.getResource("assets/loading.gif"));
+		Image image = new ImageIcon(Benchmark.class.getResource("assets/loading.gif")).getImage().getScaledInstance(100, 133, 0);
+		ImageIcon icon = new ImageIcon(image);
 		final JLabel loadingLabel = new JLabel(icon);
 		loadingLabel.setPreferredSize(new Dimension(100, 100));
-		icon = new ImageIcon(Benchmark.class.getResource("assets/pause.gif"));
+		image = new ImageIcon(Benchmark.class.getResource("assets/pause.gif")).getImage().getScaledInstance(100, 133, 0);
+		icon = new ImageIcon(image);
 		final JLabel pauseLabel = new JLabel(icon);
 		pauseLabel.setPreferredSize(new Dimension(100, 100));
 		
 		//	status text if is running
 		final JLabel statusText = new JLabel("Test nicht gestartet");
-		statusText.setPreferredSize(new Dimension(150,20));
+		statusText.setPreferredSize(new Dimension(120,20));
 		
 		console.setBackground(getBackground());
+		console.setEditable(false);
 		consolePanel.add(console);
 		consolePanel.add(statusText);
 		consolePanel.add(pauseLabel);

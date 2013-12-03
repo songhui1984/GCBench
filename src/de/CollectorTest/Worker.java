@@ -73,7 +73,6 @@ public class Worker extends Thread {
 			}
 			
 			Benchmark.console.setText("Current round:  " + currentRound + "\nOverAll Rounds: " + overAllRounds + "\n----------\nLiving:         " + livingObjects + "\nDead:           " + dyingObjects);
-			
 //			System.out.println("   Round: " + currentRound);
 //			System.out.println("\n\n\n\n\n\nCurrent round:  " + currentRound + "\nOverAll Rounds: " + overAllRounds + "\n----------\nLiving:         " + livingObjects + "\nDead:           " + dyingObjects );
 		}
