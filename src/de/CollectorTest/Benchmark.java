@@ -14,6 +14,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
+
 @SuppressWarnings("serial")
 public class Benchmark extends JFrame{
 	
@@ -25,8 +31,10 @@ public class Benchmark extends JFrame{
 	boolean isRunning = false;
 	Worker worker;
 	static JTextArea console = new JTextArea("", 5, 22);
+	static DefaultCategoryDataset data = new DefaultCategoryDataset();
 	
 	public static void main(String[] args) {
+		
 		new Benchmark();
 	}
 	
@@ -67,6 +75,16 @@ public class Benchmark extends JFrame{
 		consolePanel.add(console);
 		consolePanel.add(statusText);
 		consolePanel.add(pauseLabel);
+		
+//		TODO SHIAAT data.addValue(value, rowKey, columnKey);
+		
+		
+		JFreeChart chart = ChartFactory.createAreaChart("sdf", "asdsa", "asdsad", data);
+		
+		consolePanel.add(pauseLabel);
+		ChartPanel panel = new ChartPanel(chart);
+		this.add(panel);
+		
 		
 		//	startStop button
 		final JButton startStopWorker = new JButton("Test starten");

@@ -85,10 +85,11 @@ public class Worker extends Thread {
 	
 	//	generates a randomized object based on the position in the array
 	private RandomizedObject generateRandomizedObject(int iterator) {
-		if (iterator == 0) return new RandomizedObject(currentRound, 1, roundsToLive);
+		if (iterator == 0) return new RandomizedObject(currentRound, 2, roundsToLive);
 		int objectsRoundstoLive = ( ( (arrLength * 2) + 1 ) / ( (iterator + 1) - 1 ) ) - 1;
-		
-		countArr[objectsRoundstoLive] = countArr[objectsRoundstoLive] + 1;
+		if (objectsRoundstoLive < 1) objectsRoundstoLive = 1;
+		if (objectsRoundstoLive > roundsToLive) objectsRoundstoLive = roundsToLive;
+		countArr[objectsRoundstoLive-1] = countArr[objectsRoundstoLive-1] + 1;
 		
 		return new RandomizedObject(currentRound, objectsRoundstoLive, roundsToLive);
 	}
