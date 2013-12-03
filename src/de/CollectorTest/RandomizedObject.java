@@ -9,20 +9,21 @@ public class RandomizedObject {
 	int roundsToLive;
 	Object memory;
 	
-	public RandomizedObject(int startRound, int roundsToLive, boolean isBig) {
-		this.startRound  = startRound;
+	public RandomizedObject(int startRound, int roundsToLive, int maxRoundsToLive) {
 		float multiply = rnd.nextFloat();
 		
-		if (isBig) {
-			this.roundsToLive = (int) (rnd.nextFloat()*roundsToLive);
-			if (this.roundsToLive < (roundsToLive*0.5)) this.roundsToLive = (int) (this.roundsToLive + (roundsToLive*0.5));
-		} else {
-			this.roundsToLive = (int) (rnd.nextFloat()*(roundsToLive*0.02));
-			multiply = rnd.nextFloat()*0.05f;
-			if (this.roundsToLive < 1) this.roundsToLive = 1;
-		}
+		this.startRound  = startRound;
 		
-		memory = new byte[(int) (8192*1024*multiply)];	//	max. 8 megabyte data
+		roundsToLive = (int) ((multiply + 1) * roundsToLive);
+		if (roundsToLive < 1) roundsToLive = 1;
+		if (roundsToLive > maxRoundsToLive) roundsToLive = maxRoundsToLive;
+		this.roundsToLive = roundsToLive;
+		
+		//	max. around 4 megabyte data
+		float memFactor = roundsToLive / maxRoundsToLive;
+		if (multiply < (memFactor - 0.1)) multiply = (float) (memFactor - 0.1);
+		if (multiply > (memFactor + 0.1)) multiply = (float) (memFactor + 0.1);
+		memory = new byte[(int) (4096*1024*multiply)];
 	}
 	
 	public int getRoundsToLive() {

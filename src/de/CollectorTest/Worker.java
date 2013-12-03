@@ -8,13 +8,13 @@ public class Worker extends Thread {
 	final int arrLength = Benchmark.arrLength;
 	
 	final int bigObjects = (int) (arrLength*0.01);
+	int[] countArr = new int[roundsToLive];
 	int currentRound;
 	int livingObjects = 0;
 	int dyingObjects = 0;
 	RandomizedObject[] randomizedObjects = new RandomizedObject[arrLength];
 	AtomicBoolean forcedPause = new AtomicBoolean(false);
 	AtomicBoolean forcedShutDown = new AtomicBoolean(false);
-	
 	
 	public void run() {
 		init();
@@ -55,11 +55,7 @@ public class Worker extends Thread {
 					livingObjects++;
 				} else {
 					dyingObjects++;
-					if (i < bigObjects) {
-						randomizedObjects[i] = new RandomizedObject(currentRound, roundsToLive, true);
-					} else {
-						randomizedObjects[i] = new RandomizedObject(currentRound, roundsToLive, false);
-					}
+					randomizedObjects[i] = generateRandomizedObject(i);
 				}
 			}
 			
@@ -67,14 +63,14 @@ public class Worker extends Thread {
 			
 			// sleep
 			try {
-				Thread.sleep(50);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				System.out.println("could not sleep while working");
 			}
 			
-			Benchmark.console.setText("Current round:  " + currentRound + "\nOverAll Rounds: " + overAllRounds + "\n----------\nLiving:         " + livingObjects + "\nDead:           " + dyingObjects);
-//			System.out.println("   Round: " + currentRound);
-//			System.out.println("\n\n\n\n\n\nCurrent round:  " + currentRound + "\nOverAll Rounds: " + overAllRounds + "\n----------\nLiving:         " + livingObjects + "\nDead:           " + dyingObjects );
+			//	TODO graph data
+			
+			Benchmark.console.setText("Current round:  " + currentRound + "\nOverAll Rounds: " + overAllRounds + "\n----------\nSurvived this round:         " + livingObjects + "\nDied in this round:           " + dyingObjects);
 		}
 		
 //		System.out.println("Workerloop beendet");
@@ -83,12 +79,18 @@ public class Worker extends Thread {
 	//	initialize working array of randomized objects
 	public void init() {
 		for (int i = 0; i < randomizedObjects.length; i++) {
-			if (i < bigObjects) {
-				randomizedObjects[i] = new RandomizedObject(currentRound, roundsToLive, true);
-			}else {
-				randomizedObjects[i] = new RandomizedObject(currentRound, roundsToLive, false);
-			}
+				randomizedObjects[i] = generateRandomizedObject(i);
 		}
+	}
+	
+	//	generates a randomized object based on the position in the array
+	private RandomizedObject generateRandomizedObject(int iterator) {
+		if (iterator == 0) return new RandomizedObject(currentRound, 1, roundsToLive);
+		int objectsRoundstoLive = ( ( (arrLength * 2) + 1 ) / ( (iterator + 1) - 1 ) ) - 1;
+		
+		countArr[objectsRoundstoLive] = countArr[objectsRoundstoLive] + 1;
+		
+		return new RandomizedObject(currentRound, objectsRoundstoLive, roundsToLive);
 	}
 	
 }

@@ -19,7 +19,7 @@ public class Benchmark extends JFrame{
 	
 	//	parameter
 	static int overAllRounds = 100000;
-	static int roundsToLive = 200; 
+	static int roundsToLive = 250; 
 	static int arrLength = 1000;
 	
 	boolean isRunning = false;
