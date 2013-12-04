@@ -18,21 +18,28 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.general.DatasetUtilities;
-import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.xy.DefaultIntervalXYDataset;
+import org.jfree.data.xy.DefaultXYDataset;
+import org.jfree.ui.RectangleInsets;
 
 @SuppressWarnings("serial")
 public class Benchmark extends JFrame{
 	
 	//	parameter
-	static int overAllRounds = 1000;
+	static int overAllRounds = 50;
 	static int roundsToLive = 250; 
-	static int arrLength = 100;
+	static int arrLength = 3000;
 	
-	boolean isRunning = false;
+	static boolean isRunning = false;
 	Worker worker;
 	static JTextArea console = new JTextArea("", 5, 22);
 	static DefaultCategoryDataset data = new DefaultCategoryDataset();
+//	static DefaultIntervalXYDataset barData = new DefaultIntervalXYDataset();
+	static JButton startStopWorker;
+	static JLabel statusText;
+	static JPanel consolePanel;
+	static JLabel loadingLabel;
+	static JLabel pauseLabel;
 	
 	public static void main(String[] args) {
 		
@@ -44,7 +51,7 @@ public class Benchmark extends JFrame{
 		worker  = new Worker();
 		
 		//	window
-		this.setSize(new Dimension(640, 480));
+		this.setSize(new Dimension(640, 900));
 		
 		//	panel for buttons
 		JPanel buttonPanel = new JPanel();
@@ -52,7 +59,7 @@ public class Benchmark extends JFrame{
 		this.add(buttonPanel,BorderLayout.SOUTH);
 		
 		//	panel for console
-		final JPanel consolePanel = new JPanel();
+		consolePanel = new JPanel();
 		consolePanel.setPreferredSize(new Dimension(100, 100));
 		consolePanel.setLayout(new FlowLayout());
 		this.add(consolePanel,BorderLayout.NORTH);
@@ -60,15 +67,15 @@ public class Benchmark extends JFrame{
 		//	loading and pause label
 		Image image = new ImageIcon(Benchmark.class.getResource("assets/loading.gif")).getImage().getScaledInstance(100, 133, 0);
 		ImageIcon icon = new ImageIcon(image);
-		final JLabel loadingLabel = new JLabel(icon);
+		loadingLabel = new JLabel(icon);
 		loadingLabel.setPreferredSize(new Dimension(100, 100));
 		image = new ImageIcon(Benchmark.class.getResource("assets/pause.gif")).getImage().getScaledInstance(100, 133, 0);
 		icon = new ImageIcon(image);
-		final JLabel pauseLabel = new JLabel(icon);
+		pauseLabel = new JLabel(icon);
 		pauseLabel.setPreferredSize(new Dimension(100, 100));
 		
 		//	status text if is running
-		final JLabel statusText = new JLabel("Test nicht gestartet");
+		statusText = new JLabel("Test nicht gestartet");
 		statusText.setPreferredSize(new Dimension(150,20));
 		
 		console.setBackground(getBackground());
@@ -77,29 +84,21 @@ public class Benchmark extends JFrame{
 		consolePanel.add(statusText);
 		consolePanel.add(pauseLabel);
 		
-//		TODO SHIAAT data.addValue(value, rowKey, columnKey);
-		
-//		final double[][] data2 = new double[][] {
-//	            {1.0, 4.0, 3.0, 5.0, 5.0, 7.0, 7.0, 8.0}
-//	    };
-//
-//		data = (DefaultCategoryDataset) DatasetUtilities.createCategoryDataset("", "", data2);
-		
-		
 		JFreeChart chart = ChartFactory.createAreaChart("", "Rounds to live", "Amount of Objects", data);
 		chart.setBackgroundImageAlpha(0);
 		chart.setBackgroundPaint(getBackground());
-		
-		
-//		data.addValue(2.0, "", "");
+		chart.setBorderVisible(false);
+		chart.setBorderPaint(getBackground());
+//		chart.setPadding(new RectangleInsets(100, 0, 100, 0));
 		
 		consolePanel.add(pauseLabel);
 		ChartPanel panel = new ChartPanel(chart);
+//		ChartPanel barPanel = new ChartPanel(barChart);
 		this.add(panel);
-		data.addValue(2.0, "", "2");
+//		this.add(barPanel);
 		
 		//	startStop button
-		final JButton startStopWorker = new JButton("Test starten");
+		startStopWorker = new JButton("Test starten");
 		startStopWorker.setPreferredSize(new Dimension(170, 40));
 		startStopWorker.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -115,7 +114,10 @@ public class Benchmark extends JFrame{
 					}
 				} else {
 					startStopWorker.setText("Pausiere Test");
+					worker = null;
+					worker = new Worker();
 					worker.start();
+					
 					statusText.setText("Test läuft ...");
 				}
 				isRunning = !isRunning;
@@ -154,6 +156,7 @@ public class Benchmark extends JFrame{
 				consolePanel.add(pauseLabel);
 				consolePanel.remove(loadingLabel);
 				consolePanel.repaint();
+				data.clear();
 			}
 		});
 		buttonPanel.add(resetWorker);

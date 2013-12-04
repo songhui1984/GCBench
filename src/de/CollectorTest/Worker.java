@@ -35,12 +35,16 @@ public class Worker extends Thread {
 	
 	//	produce workload for the collector
 	public void work() {
-//		System.out.println("Neuer Workerloop gestartet");
+		//	init flat graph
+		for (int i = 1; i <= roundsToLive; i++) {
+			Benchmark.data.addValue(0.0, "", Integer.toString(i));
+		}
 		
 		while ((currentRound < overAllRounds) && !forcedShutDown.get()) {
 			livingObjects = 0;
 			dyingObjects = 0;
 			countArr = new int[roundsToLive];
+			
 			
 			while (forcedPause.get()) {
 				try {
@@ -54,11 +58,11 @@ public class Worker extends Thread {
 			for (int i = 0; i < arrLength; i++) {
 				if (randomizedObjects[i].getRoundsToLive() > (currentRound - randomizedObjects[i].getStartRound())) {
 					livingObjects++;
-					countArr[randomizedObjects[i].getRoundsToLive() + 1]++;
+					countArr[randomizedObjects[i].getRoundsToLive() - 1]++;
 				} else {
 					dyingObjects++;
 					randomizedObjects[i] = generateRandomizedObject(i);
-					countArr[randomizedObjects[i].getRoundsToLive() + 1]++;
+					countArr[randomizedObjects[i].getRoundsToLive() - 1]++;
 				}
 			}
 			
@@ -66,20 +70,25 @@ public class Worker extends Thread {
 			
 			// sleep
 			try {
-				Thread.sleep(100);
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				System.out.println("could not sleep while working");
 			}
 			
-			//	TODO graph data
-			for (int i = 0; i < arrLength; i++) {
-				Benchmark.data.addValue(countArr[randomizedObjects[i].getRoundsToLive()] , "", Integer.toString(i + 1));
+			//	graph data
+			for (int i = 0; i < roundsToLive; i++) {
+				Benchmark.data.setValue(countArr[i] , "", Integer.toString(i + 1));
 			}
 			
 			Benchmark.console.setText("Current Round:   " + currentRound + "\nOverAll Rounds: " + overAllRounds + "\n----------\nSurvived this round:         " + livingObjects + "\nDied in this round:           " + dyingObjects);
 		}
 		
-//		System.out.println("Workerloop beendet");
+		Benchmark.isRunning = false;
+		Benchmark.startStopWorker.setText("Test starten");
+		Benchmark.statusText.setText("Test Beendet");
+		Benchmark.consolePanel.add(Benchmark.pauseLabel);
+		Benchmark.consolePanel.remove(Benchmark.loadingLabel);
+		Benchmark.consolePanel.repaint();
 	}
 	
 	//	initialize working array of randomized objects
@@ -91,11 +100,19 @@ public class Worker extends Thread {
 	
 	//	generates a randomized object based on the position in the array
 	private RandomizedObject generateRandomizedObject(int iterator) {
-		if (iterator == 0) return new RandomizedObject(currentRound, 2, roundsToLive);
+		if (iterator == 0){
+			return new RandomizedObject(currentRound, 2, roundsToLive);
+		}
+		
 		int objectsRoundstoLive = ( ( (arrLength * 2) + 1 ) / ( (iterator + 1) - 1 ) ) - 1;
-		if (objectsRoundstoLive < 1) objectsRoundstoLive = 1;
-		if (objectsRoundstoLive > roundsToLive) objectsRoundstoLive = roundsToLive;
-		countArr[objectsRoundstoLive-1] = countArr[objectsRoundstoLive-1] + 1;
+		
+		if (objectsRoundstoLive < 1){
+			objectsRoundstoLive = 1;
+		}
+		
+		if (objectsRoundstoLive > roundsToLive){
+			objectsRoundstoLive = roundsToLive;
+		}
 		
 		return new RandomizedObject(currentRound, objectsRoundstoLive, roundsToLive);
 	}
