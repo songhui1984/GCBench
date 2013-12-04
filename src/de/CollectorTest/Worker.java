@@ -34,6 +34,7 @@ public class Worker extends Thread {
 	}
 	
 	//	produce workload for the collector
+	@SuppressWarnings("deprecation")
 	public void work() {
 		//	init flat graph
 		for (int i = 1; i <= roundsToLive; i++) {
@@ -89,6 +90,12 @@ public class Worker extends Thread {
 		Benchmark.consolePanel.add(Benchmark.pauseLabel);
 		Benchmark.consolePanel.remove(Benchmark.loadingLabel);
 		Benchmark.consolePanel.repaint();
+		Benchmark.overAllRoundsSlider.enable(true);
+		Benchmark.overAllRoundsSlider.repaint();
+		Benchmark.roundsToLiveSlider.enable(true);
+		Benchmark.roundsToLiveSlider.repaint();
+		Benchmark.arrLengthSlider.enable(true);
+		Benchmark.arrLengthSlider.repaint();
 	}
 	
 	//	initialize working array of randomized objects
@@ -104,7 +111,7 @@ public class Worker extends Thread {
 			return new RandomizedObject(currentRound, 2, roundsToLive);
 		}
 		
-		int objectsRoundstoLive = ( ( (arrLength * 2) + 1 ) / ( (iterator + 1) - 1 ) ) - 1;
+		int objectsRoundstoLive = (int) (( ( (arrLength * 2) + 1 ) / ( (iterator + 1) - 1 ) ) - 1);
 		
 		if (objectsRoundstoLive < 1){
 			objectsRoundstoLive = 1;

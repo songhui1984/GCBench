@@ -23,7 +23,7 @@ public class RandomizedObject {
 		float memFactor = roundsToLive / maxRoundsToLive;
 		if (multiply < (memFactor - 0.1)) multiply = (float) (memFactor - 0.1);
 		if (multiply > (memFactor + 0.1)) multiply = (float) (memFactor + 0.1);
-		memory = new byte[(int) (1024*1024*multiply)];
+		memory = new byte[(int) (4096*1024*multiply)];
 	}
 	
 	public int getRoundsToLive() {

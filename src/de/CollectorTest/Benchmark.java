@@ -6,52 +6,56 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextArea;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.xy.DefaultIntervalXYDataset;
-import org.jfree.data.xy.DefaultXYDataset;
-import org.jfree.ui.RectangleInsets;
 
 @SuppressWarnings("serial")
 public class Benchmark extends JFrame{
 	
 	//	parameter
-	static int overAllRounds = 50;
+	static int overAllRounds = 5000;
 	static int roundsToLive = 250; 
-	static int arrLength = 3000;
+	static int arrLength = 1000;
 	
 	static boolean isRunning = false;
 	Worker worker;
 	static JTextArea console = new JTextArea("", 5, 22);
 	static DefaultCategoryDataset data = new DefaultCategoryDataset();
-//	static DefaultIntervalXYDataset barData = new DefaultIntervalXYDataset();
 	static JButton startStopWorker;
 	static JLabel statusText;
 	static JPanel consolePanel;
 	static JLabel loadingLabel;
 	static JLabel pauseLabel;
+	static JSlider overAllRoundsSlider  = null;
+	static JSlider roundsToLiveSlider  = null;
+	static JSlider arrLengthSlider  = null;
 	
 	public static void main(String[] args) {
 		
 		new Benchmark();
 	}
 	
+	@SuppressWarnings("deprecation")
 	public Benchmark() {
 		//	create new worker
 		worker  = new Worker();
 		
 		//	window
-		this.setSize(new Dimension(640, 900));
+		this.setSize(new Dimension(680, 920));
 		
 		//	panel for buttons
 		JPanel buttonPanel = new JPanel();
@@ -78,30 +82,87 @@ public class Benchmark extends JFrame{
 		statusText = new JLabel("Test nicht gestartet");
 		statusText.setPreferredSize(new Dimension(150,20));
 		
+		//	console text
 		console.setBackground(getBackground());
 		console.setEditable(false);
 		consolePanel.add(console);
 		consolePanel.add(statusText);
 		consolePanel.add(pauseLabel);
 		
+		//	population chart
 		JFreeChart chart = ChartFactory.createAreaChart("", "Rounds to live", "Amount of Objects", data);
-		chart.setBackgroundImageAlpha(0);
 		chart.setBackgroundPaint(getBackground());
-		chart.setBorderVisible(false);
-		chart.setBorderPaint(getBackground());
-//		chart.setPadding(new RectangleInsets(100, 0, 100, 0));
+		chart.removeLegend();
+		CategoryAxis xAchse = chart.getCategoryPlot().getDomainAxis();
+		xAchse.setTickLabelsVisible(false);
 		
 		consolePanel.add(pauseLabel);
-		ChartPanel panel = new ChartPanel(chart);
-//		ChartPanel barPanel = new ChartPanel(barChart);
-		this.add(panel);
-//		this.add(barPanel);
+		ChartPanel chartPanel = new ChartPanel(chart);
+		JPanel controlPanel = new JPanel();
+		controlPanel.setPreferredSize(new Dimension(100, 100));
+		controlPanel.setLayout(new FlowLayout());
+		
+		overAllRoundsSlider = new JSlider(JSlider.HORIZONTAL, 100, 10000, 1000);
+		overAllRoundsSlider.setBorder(BorderFactory.createTitledBorder("Overall rounds to go:    1000"));
+		overAllRoundsSlider.setPreferredSize(new Dimension(600, 100));
+		overAllRoundsSlider.setMajorTickSpacing(990);
+		overAllRoundsSlider.setMinorTickSpacing(100);
+		overAllRoundsSlider.setPaintTicks(true);
+		overAllRoundsSlider.setPaintLabels(true);
+		overAllRoundsSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				overAllRounds = overAllRoundsSlider.getValue();
+				overAllRoundsSlider.setBorder(BorderFactory.createTitledBorder("Overall rounds to go:    " + overAllRoundsSlider.getValue()));
+			}
+		});
+		
+		roundsToLiveSlider = new JSlider(JSlider.HORIZONTAL, 10, 1000, 250);
+		roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Max. rounds to live:    250"));
+		roundsToLiveSlider.setPreferredSize(new Dimension(600, 100));
+		roundsToLiveSlider.setMajorTickSpacing(110);
+		roundsToLiveSlider.setMinorTickSpacing(10);
+		roundsToLiveSlider.setPaintTicks(true);
+		roundsToLiveSlider.setPaintLabels(true);
+		roundsToLiveSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				roundsToLive = roundsToLiveSlider.getValue();
+				roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Max. rounds to live:    " + roundsToLiveSlider.getValue()));
+			}
+		});
+		
+		arrLengthSlider = new JSlider(JSlider.HORIZONTAL, 10, 1000, 250);
+		arrLengthSlider.setBorder(BorderFactory.createTitledBorder("Amount of objects:    250"));
+		arrLengthSlider.setPreferredSize(new Dimension(600, 100));
+		arrLengthSlider.setMajorTickSpacing(110);
+		arrLengthSlider.setMinorTickSpacing(10);
+		arrLengthSlider.setPaintTicks(true);
+		arrLengthSlider.setPaintLabels(true);
+		arrLengthSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				arrLength = arrLengthSlider.getValue();
+				arrLengthSlider.setBorder(BorderFactory.createTitledBorder("Amount of objects:    " + arrLengthSlider.getValue()));
+			}
+		});
+		
+		
+		controlPanel.add(chartPanel);
+		controlPanel.add(overAllRoundsSlider);
+		controlPanel.add(roundsToLiveSlider);
+		controlPanel.add(arrLengthSlider);
+		this.add(controlPanel);
+		
 		
 		//	startStop button
 		startStopWorker = new JButton("Test starten");
 		startStopWorker.setPreferredSize(new Dimension(170, 40));
 		startStopWorker.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				overAllRoundsSlider.enable(false);
+				overAllRoundsSlider.repaint();
+				roundsToLiveSlider.enable(false);
+				roundsToLiveSlider.repaint();
+				arrLengthSlider.enable(false);
+				arrLengthSlider.repaint();
 				if (worker.isAlive()) {
 					if(!isRunning) {
 						startStopWorker.setText("Pausiere Test");
@@ -137,8 +198,15 @@ public class Benchmark extends JFrame{
 		JButton resetWorker = new JButton("Test zurückstellen");
 		resetWorker.setPreferredSize(new Dimension(170, 40));
 		resetWorker.addActionListener(new ActionListener() {
-			@SuppressWarnings("static-access")
+			@SuppressWarnings({ "static-access" })
 			public void actionPerformed(ActionEvent e) {
+				overAllRoundsSlider.enable(true);
+				overAllRoundsSlider.repaint();
+				roundsToLiveSlider.enable(true);
+				roundsToLiveSlider.repaint();
+				arrLengthSlider.enable(true);
+				arrLengthSlider.repaint();
+				consolePanel.repaint();
 				if (worker.isAlive()) {
 					worker.shutDownWorker();
 					worker.continueWorker();
