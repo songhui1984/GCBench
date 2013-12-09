@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -27,9 +28,10 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class Benchmark extends JFrame{
 	
 	//	parameter
-	static int overAllRounds = 5000;
+	static int overAllRounds = 1000;
 	static int roundsToLive = 250; 
-	static int arrLength = 1000;
+	static int arrLength = 250;
+	static short objectSize = 1024;
 	
 	static boolean isRunning = false;
 	Worker worker;
@@ -43,19 +45,18 @@ public class Benchmark extends JFrame{
 	static JSlider overAllRoundsSlider  = null;
 	static JSlider roundsToLiveSlider  = null;
 	static JSlider arrLengthSlider  = null;
+	static JSlider objectSizeSlider  = null;
 	
 	public static void main(String[] args) {
-		
 		new Benchmark();
 	}
 	
-	@SuppressWarnings("deprecation")
 	public Benchmark() {
 		//	create new worker
 		worker  = new Worker();
 		
 		//	window
-		this.setSize(new Dimension(680, 920));
+		this.setSize(new Dimension(680, 670));
 		
 		//	panel for buttons
 		JPanel buttonPanel = new JPanel();
@@ -98,13 +99,14 @@ public class Benchmark extends JFrame{
 		
 		consolePanel.add(pauseLabel);
 		ChartPanel chartPanel = new ChartPanel(chart);
+		chartPanel.setPreferredSize(new Dimension(650, 200));
 		JPanel controlPanel = new JPanel();
 		controlPanel.setPreferredSize(new Dimension(100, 100));
 		controlPanel.setLayout(new FlowLayout());
 		
 		overAllRoundsSlider = new JSlider(JSlider.HORIZONTAL, 100, 10000, 1000);
 		overAllRoundsSlider.setBorder(BorderFactory.createTitledBorder("Overall rounds to go:    1000"));
-		overAllRoundsSlider.setPreferredSize(new Dimension(600, 100));
+		overAllRoundsSlider.setPreferredSize(new Dimension(600, 65));
 		overAllRoundsSlider.setMajorTickSpacing(990);
 		overAllRoundsSlider.setMinorTickSpacing(100);
 		overAllRoundsSlider.setPaintTicks(true);
@@ -117,8 +119,8 @@ public class Benchmark extends JFrame{
 		});
 		
 		roundsToLiveSlider = new JSlider(JSlider.HORIZONTAL, 10, 1000, 250);
-		roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Max. rounds to live:    250"));
-		roundsToLiveSlider.setPreferredSize(new Dimension(600, 100));
+		roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Max. rounds to live per object:    250"));
+		roundsToLiveSlider.setPreferredSize(new Dimension(600, 65));
 		roundsToLiveSlider.setMajorTickSpacing(110);
 		roundsToLiveSlider.setMinorTickSpacing(10);
 		roundsToLiveSlider.setPaintTicks(true);
@@ -126,13 +128,13 @@ public class Benchmark extends JFrame{
 		roundsToLiveSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				roundsToLive = roundsToLiveSlider.getValue();
-				roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Max. rounds to live:    " + roundsToLiveSlider.getValue()));
+				roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Max. rounds to live per object:    " + roundsToLiveSlider.getValue()));
 			}
 		});
 		
 		arrLengthSlider = new JSlider(JSlider.HORIZONTAL, 10, 1000, 250);
 		arrLengthSlider.setBorder(BorderFactory.createTitledBorder("Amount of objects:    250"));
-		arrLengthSlider.setPreferredSize(new Dimension(600, 100));
+		arrLengthSlider.setPreferredSize(new Dimension(600, 65));
 		arrLengthSlider.setMajorTickSpacing(110);
 		arrLengthSlider.setMinorTickSpacing(10);
 		arrLengthSlider.setPaintTicks(true);
@@ -144,25 +146,34 @@ public class Benchmark extends JFrame{
 			}
 		});
 		
+		objectSizeSlider = new JSlider(JSlider.HORIZONTAL, 128, 4096, 1024);
+		objectSizeSlider.setBorder(BorderFactory.createTitledBorder("Max. size of an object (in kilobyte):    1024"));
+		objectSizeSlider.setPreferredSize(new Dimension(600, 65));
+		objectSizeSlider.setMajorTickSpacing(566);
+		objectSizeSlider.setToolTipText("Set the size in kilobyte of an object to be reached maximum.");
+		objectSizeSlider.setMinorTickSpacing(32);
+		objectSizeSlider.setPaintTicks(true);
+		objectSizeSlider.setPaintLabels(true);
+		objectSizeSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				objectSize = (short) objectSizeSlider.getValue();
+				objectSizeSlider.setBorder(BorderFactory.createTitledBorder("Max. size of an object (in kilobyte):    " + objectSizeSlider.getValue()));
+			}
+		});
 		
 		controlPanel.add(chartPanel);
 		controlPanel.add(overAllRoundsSlider);
 		controlPanel.add(roundsToLiveSlider);
 		controlPanel.add(arrLengthSlider);
+		controlPanel.add(objectSizeSlider);
 		this.add(controlPanel);
-		
 		
 		//	startStop button
 		startStopWorker = new JButton("Test starten");
 		startStopWorker.setPreferredSize(new Dimension(170, 40));
 		startStopWorker.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				overAllRoundsSlider.enable(false);
-				overAllRoundsSlider.repaint();
-				roundsToLiveSlider.enable(false);
-				roundsToLiveSlider.repaint();
-				arrLengthSlider.enable(false);
-				arrLengthSlider.repaint();
+				setSlidersEditable(false);
 				if (worker.isAlive()) {
 					if(!isRunning) {
 						startStopWorker.setText("Pausiere Test");
@@ -200,13 +211,7 @@ public class Benchmark extends JFrame{
 		resetWorker.addActionListener(new ActionListener() {
 			@SuppressWarnings({ "static-access" })
 			public void actionPerformed(ActionEvent e) {
-				overAllRoundsSlider.enable(true);
-				overAllRoundsSlider.repaint();
-				roundsToLiveSlider.enable(true);
-				roundsToLiveSlider.repaint();
-				arrLengthSlider.enable(true);
-				arrLengthSlider.repaint();
-				consolePanel.repaint();
+				setSlidersEditable(true);
 				if (worker.isAlive()) {
 					worker.shutDownWorker();
 					worker.continueWorker();
@@ -230,6 +235,18 @@ public class Benchmark extends JFrame{
 		buttonPanel.add(resetWorker);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static void setSlidersEditable(boolean state) {
+		overAllRoundsSlider.enable(state);
+		overAllRoundsSlider.repaint();
+		roundsToLiveSlider.enable(state);
+		roundsToLiveSlider.repaint();
+		arrLengthSlider.enable(state);
+		arrLengthSlider.repaint();
+		objectSizeSlider.enable(state);
+		objectSizeSlider.repaint();
 	}
 	
 }
