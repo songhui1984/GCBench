@@ -14,6 +14,7 @@ public class Worker extends Thread {
 	int dyingObjects = 0;
 	long kmh = 0;
 	long kmh1 = 0;
+	long kmh2 = 0;
 	RandomizedObject[] randomizedObjects = new RandomizedObject[arrLength];
 	AtomicBoolean forcedPause = new AtomicBoolean(false);
 	AtomicBoolean forcedShutDown = new AtomicBoolean(false);
@@ -83,7 +84,13 @@ public class Worker extends Thread {
 				Benchmark.data.setValue(countArr[i] , "", Integer.toString(i + 1));
 			}
 			
-			kmh = 1000/(System.currentTimeMillis()-kmh1);
+			kmh2 = kmh2 + (1000/(System.currentTimeMillis()-kmh1));
+			
+			if (currentRound % 5 == 0) {
+				kmh = kmh2 / 5;
+				kmh2 = 0;
+			}
+			
 			Benchmark.console.setText("Current Round:   " + currentRound + "\nOverAll Rounds: " + overAllRounds + "\n----------\nSurvived this round:         " + livingObjects + "\nDied in this round:           " + dyingObjects + "\nRounds per second:       " + kmh);
 		}
 		
