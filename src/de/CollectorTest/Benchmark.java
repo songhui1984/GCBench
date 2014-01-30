@@ -65,7 +65,7 @@ public class Benchmark extends JFrame{
 		
 		//	panel for console
 		consolePanel = new JPanel();
-		consolePanel.setPreferredSize(new Dimension(100, 100));
+		consolePanel.setPreferredSize(new Dimension(100, 105));
 		consolePanel.setLayout(new FlowLayout());
 		this.add(consolePanel,BorderLayout.NORTH);
 		

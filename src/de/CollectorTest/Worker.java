@@ -12,6 +12,8 @@ public class Worker extends Thread {
 	int currentRound;
 	int livingObjects = 0;
 	int dyingObjects = 0;
+	long kmh = 0;
+	long kmh1 = 0;
 	RandomizedObject[] randomizedObjects = new RandomizedObject[arrLength];
 	AtomicBoolean forcedPause = new AtomicBoolean(false);
 	AtomicBoolean forcedShutDown = new AtomicBoolean(false);
@@ -43,6 +45,7 @@ public class Worker extends Thread {
 		while ((currentRound < overAllRounds) && !forcedShutDown.get()) {
 			livingObjects = 0;
 			dyingObjects = 0;
+			kmh1 = System.currentTimeMillis();
 			countArr = new int[roundsToLive];
 			
 			
@@ -80,7 +83,8 @@ public class Worker extends Thread {
 				Benchmark.data.setValue(countArr[i] , "", Integer.toString(i + 1));
 			}
 			
-			Benchmark.console.setText("Current Round:   " + currentRound + "\nOverAll Rounds: " + overAllRounds + "\n----------\nSurvived this round:         " + livingObjects + "\nDied in this round:           " + dyingObjects);
+			kmh = 1000/(System.currentTimeMillis()-kmh1);
+			Benchmark.console.setText("Current Round:   " + currentRound + "\nOverAll Rounds: " + overAllRounds + "\n----------\nSurvived this round:         " + livingObjects + "\nDied in this round:           " + dyingObjects + "\nRounds per second:       " + kmh);
 		}
 		
 		Benchmark.isRunning = false;
