@@ -6,6 +6,7 @@ public class Worker extends Thread {
 	final int roundsToLive = Benchmark.roundsToLive;
 	final int overAllRounds = Benchmark.overAllRounds;
 	final int arrLength = Benchmark.arrLength;
+	final short objectSize = Benchmark.objectSize;
 	
 	final int bigObjects = (int) (arrLength*0.01);
 	int[] countArr = new int[roundsToLive];
@@ -91,7 +92,7 @@ public class Worker extends Thread {
 				kmh2 = 0;
 			}
 			
-			Benchmark.console.setText("Current Round:   " + currentRound + "\nOverAll Rounds: " + overAllRounds + "\n----------\nSurvived this round:         " + livingObjects + "\nDied in this round:           " + dyingObjects + "\nRounds per second:       " + kmh);
+			Benchmark.console.setText("Derzeitige Runde:      " + currentRound + "\nGesamte Runden:     " + overAllRounds + "\n----------\n‹berlebten dieser Runde:         " + livingObjects + "\nStarben diese Runde:                " + dyingObjects + "\nRunden pro Sekunde:                " + kmh);
 		}
 		
 		Benchmark.isRunning = false;
@@ -113,7 +114,7 @@ public class Worker extends Thread {
 	//	generates a randomized object based on the position in the array
 	private RandomizedObject generateRandomizedObject(int iterator) {
 		if (iterator == 0){
-			return new RandomizedObject(currentRound, 2, roundsToLive);
+			return new RandomizedObject(currentRound, 2, roundsToLive, objectSize);
 		}
 		
 		int objectsRoundstoLive = (int) (( ( (arrLength * 2) + 1 ) / ( (iterator + 1) - 1 ) ) - 1);
@@ -126,7 +127,7 @@ public class Worker extends Thread {
 			objectsRoundstoLive = roundsToLive;
 		}
 		
-		return new RandomizedObject(currentRound, objectsRoundstoLive, roundsToLive);
+		return new RandomizedObject(currentRound, objectsRoundstoLive, roundsToLive, objectSize);
 	}
 	
 }

@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -48,15 +50,33 @@ public class Benchmark extends JFrame{
 	static JSlider objectSizeSlider  = null;
 	
 	public static void main(String[] args) {
+		
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			
+		} catch (InstantiationException e) {
+			
+		} catch (IllegalAccessException e) {
+			
+		} catch (UnsupportedLookAndFeelException e) {
+			
+		}
+		
 		new Benchmark();
+		
 	}
 	
 	public Benchmark() {
+		
+		super("Garbage Collector Benchmark");
+		
 		//	create new worker
 		worker  = new Worker();
 		
 		//	window
-		this.setSize(new Dimension(680, 670));
+		this.setSize(new Dimension(680, 680));
+		this.setResizable(false);
 		
 		//	panel for buttons
 		JPanel buttonPanel = new JPanel();
@@ -91,7 +111,7 @@ public class Benchmark extends JFrame{
 		consolePanel.add(pauseLabel);
 		
 		//	population chart
-		JFreeChart chart = ChartFactory.createAreaChart("", "Rounds to live", "Amount of Objects", data);
+		JFreeChart chart = ChartFactory.createAreaChart("", "Runden zu leben", "Anzahl der Objekte", data);
 		chart.setBackgroundPaint(getBackground());
 		chart.removeLegend();
 		CategoryAxis xAchse = chart.getCategoryPlot().getDomainAxis();
@@ -105,59 +125,59 @@ public class Benchmark extends JFrame{
 		controlPanel.setLayout(new FlowLayout());
 		
 		overAllRoundsSlider = new JSlider(JSlider.HORIZONTAL, 100, 10000, 1000);
-		overAllRoundsSlider.setBorder(BorderFactory.createTitledBorder("Overall rounds to go:    1000"));
+		overAllRoundsSlider.setBorder(BorderFactory.createTitledBorder("Gesamte Rundenanzahl:    1000"));
 		overAllRoundsSlider.setPreferredSize(new Dimension(600, 65));
-		overAllRoundsSlider.setMajorTickSpacing(990);
-		overAllRoundsSlider.setMinorTickSpacing(100);
+		overAllRoundsSlider.setMajorTickSpacing(1100);
+		overAllRoundsSlider.setMinorTickSpacing(110);
 		overAllRoundsSlider.setPaintTicks(true);
 		overAllRoundsSlider.setPaintLabels(true);
 		overAllRoundsSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				overAllRounds = overAllRoundsSlider.getValue();
-				overAllRoundsSlider.setBorder(BorderFactory.createTitledBorder("Overall rounds to go:    " + overAllRoundsSlider.getValue()));
+				overAllRoundsSlider.setBorder(BorderFactory.createTitledBorder("Gesamte Rundenanzahl:    " + overAllRoundsSlider.getValue()));
 			}
 		});
 		
 		roundsToLiveSlider = new JSlider(JSlider.HORIZONTAL, 10, 1000, 250);
-		roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Max. rounds to live per object:    250"));
+		roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Maximale Rundeanzahl zu leben pro Objekt:    250"));
 		roundsToLiveSlider.setPreferredSize(new Dimension(600, 65));
 		roundsToLiveSlider.setMajorTickSpacing(110);
-		roundsToLiveSlider.setMinorTickSpacing(10);
+		roundsToLiveSlider.setMinorTickSpacing(11);
 		roundsToLiveSlider.setPaintTicks(true);
 		roundsToLiveSlider.setPaintLabels(true);
 		roundsToLiveSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				roundsToLive = roundsToLiveSlider.getValue();
-				roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Max. rounds to live per object:    " + roundsToLiveSlider.getValue()));
+				roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Maximale Rundeanzahl zu leben pro Objekt:    " + roundsToLiveSlider.getValue()));
 			}
 		});
 		
 		arrLengthSlider = new JSlider(JSlider.HORIZONTAL, 10, 1000, 250);
-		arrLengthSlider.setBorder(BorderFactory.createTitledBorder("Amount of objects:    250"));
+		arrLengthSlider.setBorder(BorderFactory.createTitledBorder("Anzahl der Objekte:    250"));
 		arrLengthSlider.setPreferredSize(new Dimension(600, 65));
 		arrLengthSlider.setMajorTickSpacing(110);
-		arrLengthSlider.setMinorTickSpacing(10);
+		arrLengthSlider.setMinorTickSpacing(11);
 		arrLengthSlider.setPaintTicks(true);
 		arrLengthSlider.setPaintLabels(true);
 		arrLengthSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				arrLength = arrLengthSlider.getValue();
-				arrLengthSlider.setBorder(BorderFactory.createTitledBorder("Amount of objects:    " + arrLengthSlider.getValue()));
+				arrLengthSlider.setBorder(BorderFactory.createTitledBorder("Anzahl der Objekte:    " + arrLengthSlider.getValue()));
 			}
 		});
 		
-		objectSizeSlider = new JSlider(JSlider.HORIZONTAL, 128, 4096, 1024);
-		objectSizeSlider.setBorder(BorderFactory.createTitledBorder("Max. size of an object (in kilobyte):    1024"));
-		objectSizeSlider.setPreferredSize(new Dimension(600, 65));
-		objectSizeSlider.setMajorTickSpacing(566);
-		objectSizeSlider.setToolTipText("Set the size in kilobyte of an object to be reached maximum.");
-		objectSizeSlider.setMinorTickSpacing(32);
+		objectSizeSlider = new JSlider(JSlider.HORIZONTAL, 128, 8192, 1024);
+		objectSizeSlider.setBorder(BorderFactory.createTitledBorder("Maximale Größe eines Objektes (in Kilobyte):    1024"));
+		objectSizeSlider.setPreferredSize(new Dimension(600, 75));
+		objectSizeSlider.setMajorTickSpacing(1008);
+		objectSizeSlider.setToolTipText("Setzt die maximale Größe welches ein Objekt sein kann.");
+		objectSizeSlider.setMinorTickSpacing(63);
 		objectSizeSlider.setPaintTicks(true);
 		objectSizeSlider.setPaintLabels(true);
 		objectSizeSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				objectSize = (short) objectSizeSlider.getValue();
-				objectSizeSlider.setBorder(BorderFactory.createTitledBorder("Max. size of an object (in kilobyte):    " + objectSizeSlider.getValue()));
+				objectSizeSlider.setBorder(BorderFactory.createTitledBorder("Maximale Größe eines Objektes (in Kilobyte):    " + objectSizeSlider.getValue()));
 			}
 		});
 		
