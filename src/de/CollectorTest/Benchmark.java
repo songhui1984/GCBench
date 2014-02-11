@@ -24,6 +24,8 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.data.Range;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 @SuppressWarnings("serial")
@@ -34,9 +36,9 @@ public class Benchmark extends JFrame{
 	static int roundsToLive = 250; 
 	static int arrLength = 250;
 	static short objectSize = 1024;
+	static short oldAmount = 25;
 	
 	static boolean isRunning = false;
-	Worker worker;
 	static JTextArea console = new JTextArea("", 5, 22);
 	static DefaultCategoryDataset data = new DefaultCategoryDataset();
 	static JButton startStopWorker;
@@ -48,6 +50,8 @@ public class Benchmark extends JFrame{
 	static JSlider roundsToLiveSlider  = null;
 	static JSlider arrLengthSlider  = null;
 	static JSlider objectSizeSlider  = null;
+	static JSlider oldAmountSlider  = null;
+	Worker worker;
 	
 	public static void main(String[] args) {
 		
@@ -75,7 +79,7 @@ public class Benchmark extends JFrame{
 		worker  = new Worker();
 		
 		//	window
-		this.setSize(new Dimension(680, 680));
+		this.setSize(new Dimension(680, 760));
 		this.setResizable(false);
 		
 		//	panel for buttons
@@ -111,11 +115,14 @@ public class Benchmark extends JFrame{
 		consolePanel.add(pauseLabel);
 		
 		//	population chart
-		JFreeChart chart = ChartFactory.createAreaChart("", "Runden zu leben", "Anzahl der Objekte", data);
+		final JFreeChart chart = ChartFactory.createAreaChart("", "Runden zu leben", "Anzahl der Objekte", data);
 		chart.setBackgroundPaint(getBackground());
 		chart.removeLegend();
 		CategoryAxis xAchse = chart.getCategoryPlot().getDomainAxis();
 		xAchse.setTickLabelsVisible(false);
+		ValueAxis yAchse = chart.getCategoryPlot().getRangeAxis();
+		yAchse.setRange(new Range(0, 125), true, false);
+		
 		
 		consolePanel.add(pauseLabel);
 		ChartPanel chartPanel = new ChartPanel(chart);
@@ -138,11 +145,11 @@ public class Benchmark extends JFrame{
 			}
 		});
 		
-		roundsToLiveSlider = new JSlider(JSlider.HORIZONTAL, 10, 1000, 250);
+		roundsToLiveSlider = new JSlider(JSlider.HORIZONTAL, 10, 500, 250);
 		roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Maximale Rundeanzahl zu leben pro Objekt:    250"));
 		roundsToLiveSlider.setPreferredSize(new Dimension(600, 65));
-		roundsToLiveSlider.setMajorTickSpacing(110);
-		roundsToLiveSlider.setMinorTickSpacing(11);
+		roundsToLiveSlider.setMajorTickSpacing(35);
+		roundsToLiveSlider.setMinorTickSpacing(7);
 		roundsToLiveSlider.setPaintTicks(true);
 		roundsToLiveSlider.setPaintLabels(true);
 		roundsToLiveSlider.addChangeListener(new ChangeListener() {
@@ -163,6 +170,10 @@ public class Benchmark extends JFrame{
 			public void stateChanged(ChangeEvent arg0) {
 				arrLength = arrLengthSlider.getValue();
 				arrLengthSlider.setBorder(BorderFactory.createTitledBorder("Anzahl der Objekte:    " + arrLengthSlider.getValue()));
+				ValueAxis yAchse = chart.getCategoryPlot().getRangeAxis();
+				yAchse.setRange(new Range(0, arrLength*0.5), false, false);
+				yAchse.setAutoRange(false);
+				yAchse.setAutoRangeMinimumSize(500);
 			}
 		});
 		
@@ -181,11 +192,27 @@ public class Benchmark extends JFrame{
 			}
 		});
 		
+		oldAmountSlider = new JSlider(JSlider.HORIZONTAL, 5, 50, 25);
+		oldAmountSlider.setBorder(BorderFactory.createTitledBorder("Prozentsatz an langlebigen Objekten:    25%"));
+		oldAmountSlider.setPreferredSize(new Dimension(600, 75));
+		oldAmountSlider.setMajorTickSpacing(5);
+		oldAmountSlider.setToolTipText("Setzt den Prozentsatz an langlebigen Objekten.");
+		oldAmountSlider.setMinorTickSpacing(1);
+		oldAmountSlider.setPaintTicks(true);
+		oldAmountSlider.setPaintLabels(true);
+		oldAmountSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				oldAmount = (short) (oldAmountSlider.getValue());
+				oldAmountSlider.setBorder(BorderFactory.createTitledBorder("Prozentsatz an langlebigen Objekten:    " + oldAmountSlider.getValue() + "%"));
+			}
+		});
+		
 		controlPanel.add(chartPanel);
 		controlPanel.add(overAllRoundsSlider);
 		controlPanel.add(roundsToLiveSlider);
 		controlPanel.add(arrLengthSlider);
 		controlPanel.add(objectSizeSlider);
+		controlPanel.add(oldAmountSlider);
 		this.add(controlPanel);
 		
 		//	startStop button
@@ -267,6 +294,8 @@ public class Benchmark extends JFrame{
 		arrLengthSlider.repaint();
 		objectSizeSlider.enable(state);
 		objectSizeSlider.repaint();
+		oldAmountSlider.enable(state);
+		oldAmountSlider.repaint();
 	}
 	
 }

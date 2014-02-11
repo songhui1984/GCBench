@@ -1,5 +1,7 @@
 package de.CollectorTest;
 
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Worker extends Thread {
@@ -7,9 +9,12 @@ public class Worker extends Thread {
 	final int overAllRounds = Benchmark.overAllRounds;
 	final int arrLength = Benchmark.arrLength;
 	final short objectSize = Benchmark.objectSize;
+	final short oldAmountpercent = Benchmark.oldAmount;
+	boolean old = false;
 	
 	final int bigObjects = (int) (arrLength*0.01);
 	int[] countArr = new int[roundsToLive];
+	ArrayList<Integer> oldArr = new ArrayList<Integer>();
 	int currentRound;
 	int livingObjects = 0;
 	int dyingObjects = 0;
@@ -19,6 +24,7 @@ public class Worker extends Thread {
 	RandomizedObject[] randomizedObjects = new RandomizedObject[arrLength];
 	AtomicBoolean forcedPause = new AtomicBoolean(false);
 	AtomicBoolean forcedShutDown = new AtomicBoolean(false);
+	static Random rnd = new Random(1337); 
 	
 	public void run() {
 		init();
@@ -49,7 +55,20 @@ public class Worker extends Thread {
 			dyingObjects = 0;
 			kmh1 = System.currentTimeMillis();
 			countArr = new int[roundsToLive];
+			oldArr = null;
 			
+			double oldAmountFaktor = oldAmountpercent;
+			oldAmountFaktor = oldAmountFaktor /100;
+			oldAmountFaktor = oldAmountFaktor * arrLength;
+			
+			
+			
+			if (currentRound % ((int) (roundsToLive*0.1)) == 0 || currentRound == 2) {
+				oldArr = new ArrayList<Integer>();
+				for (int i = 0; i < oldAmountFaktor*0.4; i++) {
+					oldArr.add(i, (int) (rnd.nextFloat()*arrLength)) ;
+				}
+			}
 			
 			while (forcedPause.get()) {
 				try {
@@ -106,6 +125,7 @@ public class Worker extends Thread {
 	
 	//	initialize working array of randomized objects
 	public void init() {
+		oldArr = new ArrayList<Integer>();
 		for (int i = 0; i < randomizedObjects.length; i++) {
 				randomizedObjects[i] = generateRandomizedObject(i);
 		}
@@ -117,7 +137,16 @@ public class Worker extends Thread {
 			return new RandomizedObject(currentRound, 2, roundsToLive, objectSize);
 		}
 		
-		int objectsRoundstoLive = (int) (( ( (arrLength * 2) + 1 ) / ( (iterator + 1) - 1 ) ) - 1);
+		int objectsRoundstoLive = 1;
+		
+		if (oldArr != null && oldArr.contains(iterator)) {
+			
+			//objectsRoundstoLive = (int) ((rnd.nextFloat()*(roundsToLive*0.2)) + (roundsToLive*0.8));
+			objectsRoundstoLive = roundsToLive;
+			
+		} else {
+			objectsRoundstoLive = (int) (2 * arrLength / iterator) - 1 ;
+		}
 		
 		if (objectsRoundstoLive < 1){
 			objectsRoundstoLive = 1;

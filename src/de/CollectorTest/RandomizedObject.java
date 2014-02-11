@@ -14,7 +14,7 @@ public class RandomizedObject {
 		
 		this.startRound  = startRound;
 		
-		roundsToLive = (int) ((multiply + 1) * roundsToLive);
+		roundsToLive = (int) ((multiply*0.2 + 0.9) * roundsToLive);
 		if (roundsToLive < 1) roundsToLive = 1;
 		if (roundsToLive > maxRoundsToLive) roundsToLive = maxRoundsToLive;
 		this.roundsToLive = roundsToLive;
