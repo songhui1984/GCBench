@@ -141,11 +141,10 @@ public class Worker extends Thread {
 		
 		if (oldArr != null && oldArr.contains(iterator)) {
 			
-			//objectsRoundstoLive = (int) ((rnd.nextFloat()*(roundsToLive*0.2)) + (roundsToLive*0.8));
 			objectsRoundstoLive = roundsToLive;
 			
 		} else {
-			objectsRoundstoLive = (int) (2 * arrLength / iterator) - 1 ;
+			objectsRoundstoLive = (int) (3 * arrLength / iterator) - 2 ;
 		}
 		
 		if (objectsRoundstoLive < 1){

@@ -142,6 +142,9 @@ public class Benchmark extends JFrame{
 			public void stateChanged(ChangeEvent arg0) {
 				overAllRounds = overAllRoundsSlider.getValue();
 				overAllRoundsSlider.setBorder(BorderFactory.createTitledBorder("Gesamte Rundenanzahl:    " + overAllRoundsSlider.getValue()));
+				ValueAxis yAchse = chart.getCategoryPlot().getRangeAxis();
+				yAchse.setRange(new Range(0, arrLength*0.5), false, false);
+				yAchse.setAutoRange(false);
 			}
 		});
 		
@@ -156,6 +159,9 @@ public class Benchmark extends JFrame{
 			public void stateChanged(ChangeEvent arg0) {
 				roundsToLive = roundsToLiveSlider.getValue();
 				roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Maximale Rundeanzahl zu leben pro Objekt:    " + roundsToLiveSlider.getValue()));
+				ValueAxis yAchse = chart.getCategoryPlot().getRangeAxis();
+				yAchse.setRange(new Range(0, arrLength*0.5), false, false);
+				yAchse.setAutoRange(false);
 			}
 		});
 		
@@ -173,7 +179,6 @@ public class Benchmark extends JFrame{
 				ValueAxis yAchse = chart.getCategoryPlot().getRangeAxis();
 				yAchse.setRange(new Range(0, arrLength*0.5), false, false);
 				yAchse.setAutoRange(false);
-				yAchse.setAutoRangeMinimumSize(500);
 			}
 		});
 		
@@ -189,6 +194,9 @@ public class Benchmark extends JFrame{
 			public void stateChanged(ChangeEvent arg0) {
 				objectSize = (short) objectSizeSlider.getValue();
 				objectSizeSlider.setBorder(BorderFactory.createTitledBorder("Maximale Größe eines Objektes (in Kilobyte):    " + objectSizeSlider.getValue()));
+				ValueAxis yAchse = chart.getCategoryPlot().getRangeAxis();
+				yAchse.setRange(new Range(0, arrLength*0.5), false, false);
+				yAchse.setAutoRange(false);
 			}
 		});
 		
@@ -204,6 +212,9 @@ public class Benchmark extends JFrame{
 			public void stateChanged(ChangeEvent arg0) {
 				oldAmount = (short) (oldAmountSlider.getValue());
 				oldAmountSlider.setBorder(BorderFactory.createTitledBorder("Prozentsatz an langlebigen Objekten:    " + oldAmountSlider.getValue() + "%"));
+				ValueAxis yAchse = chart.getCategoryPlot().getRangeAxis();
+				yAchse.setRange(new Range(0, arrLength*0.5), false, false);
+				yAchse.setAutoRange(false);
 			}
 		});
 		
