@@ -1,5 +1,6 @@
 package de.CollectorTest;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,6 +12,7 @@ public class Worker extends Thread {
 	final short objectSize = Benchmark.objectSize;
 	final short oldAmountpercent = Benchmark.oldAmount;
 	boolean old = false;
+	DecimalFormat f = new DecimalFormat("#0.0"); 
 	
 	final int bigObjects = (int) (arrLength*0.01);
 	int[] countArr = new int[roundsToLive];
@@ -21,6 +23,9 @@ public class Worker extends Thread {
 	long kmh = 0;
 	long kmh1 = 0;
 	long kmh2 = 0;
+	long zeit = 0;
+	long tempPauseZeit;
+	long pauseZeit;
 	RandomizedObject[] randomizedObjects = new RandomizedObject[arrLength];
 	AtomicBoolean forcedPause = new AtomicBoolean(false);
 	AtomicBoolean forcedShutDown = new AtomicBoolean(false);
@@ -50,7 +55,11 @@ public class Worker extends Thread {
 			Benchmark.data.addValue(0.0, "", Integer.toString(i));
 		}
 		
+		zeit = System.currentTimeMillis();
+		tempPauseZeit = 0;
+		
 		while ((currentRound < overAllRounds) && !forcedShutDown.get()) {
+			
 			livingObjects = 0;
 			dyingObjects = 0;
 			kmh1 = System.currentTimeMillis();
@@ -70,12 +79,19 @@ public class Worker extends Thread {
 				}
 			}
 			
+			tempPauseZeit = System.currentTimeMillis();
+			
 			while (forcedPause.get()) {
+				
 				try {
-					sleep(300);
+					sleep(100);
 				} catch (InterruptedException e) {
 					System.out.println("could not sleep to make a pause");
 				}
+			}
+			
+			if ((System.currentTimeMillis() - tempPauseZeit) > 10) {
+				pauseZeit = pauseZeit + (System.currentTimeMillis() - tempPauseZeit);
 			}
 			
 			//	the working loop
@@ -110,8 +126,9 @@ public class Worker extends Thread {
 				kmh = kmh2 / 5;
 				kmh2 = 0;
 			}
-			
-			Benchmark.console.setText("Derzeitige Runde:      " + currentRound + "\nGesamte Runden:     " + overAllRounds + "\n----------\n‹berlebten dieser Runde:         " + livingObjects + "\nStarben diese Runde:                " + dyingObjects + "\nRunden pro Sekunde:                " + kmh);
+			double currentZeit = (long) ((System.currentTimeMillis() - zeit - pauseZeit) * 0.01);
+			currentZeit = currentZeit * 0.1;
+			Benchmark.console.setText("Derzeitige Runde:      " + currentRound + "\nGesamte Runden:     " + overAllRounds + "\n----------\n‹berlebten dieser Runde:         " + livingObjects + "\nStarben diese Runde:                " + dyingObjects + "\nRunden pro Sekunde:                " + kmh + "\nGesamtzeit:                                   " + f.format(currentZeit));
 		}
 		
 		Benchmark.isRunning = false;

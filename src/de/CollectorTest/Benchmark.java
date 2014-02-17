@@ -79,7 +79,7 @@ public class Benchmark extends JFrame{
 		worker  = new Worker();
 		
 		//	window
-		this.setSize(new Dimension(680, 760));
+		this.setSize(new Dimension(680, 780));
 		this.setResizable(false);
 		
 		//	panel for buttons
@@ -89,7 +89,7 @@ public class Benchmark extends JFrame{
 		
 		//	panel for console
 		consolePanel = new JPanel();
-		consolePanel.setPreferredSize(new Dimension(100, 105));
+		consolePanel.setPreferredSize(new Dimension(100, 120));
 		consolePanel.setLayout(new FlowLayout());
 		this.add(consolePanel,BorderLayout.NORTH);
 		
