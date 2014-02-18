@@ -149,7 +149,7 @@ public class Benchmark extends JFrame{
 		});
 		
 		roundsToLiveSlider = new JSlider(JSlider.HORIZONTAL, 10, 500, 250);
-		roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Maximale Rundeanzahl zu leben pro Objekt:    250"));
+		roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Maximale Lebensdauer (in Runden):    250"));
 		roundsToLiveSlider.setPreferredSize(new Dimension(600, 65));
 		roundsToLiveSlider.setMajorTickSpacing(35);
 		roundsToLiveSlider.setMinorTickSpacing(7);
@@ -158,7 +158,7 @@ public class Benchmark extends JFrame{
 		roundsToLiveSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				roundsToLive = roundsToLiveSlider.getValue();
-				roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Maximale Rundeanzahl zu leben pro Objekt:    " + roundsToLiveSlider.getValue()));
+				roundsToLiveSlider.setBorder(BorderFactory.createTitledBorder("Maximale Lebensdauer (in Runden):    " + roundsToLiveSlider.getValue()));
 				ValueAxis yAchse = chart.getCategoryPlot().getRangeAxis();
 				yAchse.setRange(new Range(0, arrLength*0.5), false, false);
 				yAchse.setAutoRange(false);

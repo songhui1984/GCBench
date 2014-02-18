@@ -128,7 +128,7 @@ public class Worker extends Thread {
 			}
 			double currentZeit = (long) ((System.currentTimeMillis() - zeit - pauseZeit) * 0.01);
 			currentZeit = currentZeit * 0.1;
-			Benchmark.console.setText("Derzeitige Runde:      " + currentRound + "\nGesamte Runden:     " + overAllRounds + "\n----------\n‹berlebten dieser Runde:         " + livingObjects + "\nStarben diese Runde:                " + dyingObjects + "\nRunden pro Sekunde:                " + kmh + "\nGesamtzeit:                                   " + f.format(currentZeit));
+			Benchmark.console.setText("Derzeitige Runde:      " + currentRound + "\nGesamte Runden:     " + overAllRounds + "\n----------\n‹berlebten dieser Runde:         " + livingObjects + "\nStarben diese Runde:                " + dyingObjects + "\nRunden pro Sekunde:                " + kmh + "\nGesamtzeit:                                   " + f.format(currentZeit) + " Sek.");
 		}
 		
 		Benchmark.isRunning = false;
